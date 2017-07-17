@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="xyz.ngoni.nm.firebasephonenumber.MainActivity"
+    android:background="#ffffff">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:hint="number must begin with code eg +263"
+        android:id="@+id/number_et" />
+    <Button
+        android:id="@+id/send_button"
+        android:text="send me an sms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/number_et"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Enter the code you receive in the field below. Standard sms rates may apply."
+        android:id="@+id/textView"
+        android:layout_below="@+id/send_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <EditText
+        android:id="@+id/received_code_ed"
+        android:layout_below="@id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="type in your received code"/>
+
+    <Button
+        android:layout_below="@+id/received_code_ed"
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="sign in"/>
+
+
+</RelativeLayout>
