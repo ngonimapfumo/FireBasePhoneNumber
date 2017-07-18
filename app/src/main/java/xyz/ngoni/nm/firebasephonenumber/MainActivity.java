@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -56,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     Toast.makeText(MainActivity.this, "you are now logged in", Toast.LENGTH_SHORT).show();
 
-
-
                 }
 
             }
@@ -66,12 +66,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void requestCode(View view) {
+    public void requestCode(View view) throws FirebaseTooManyRequestsException {
         String phoneNumber = mNum.getText().toString();
-        if (TextUtils.isEmpty(phoneNumber))
+        if (phoneNumber.isEmpty()) {
+            mNum.setError("number not entered");
             return;
+        }
+
+        if(!phoneNumber.startsWith("+")){
+            mNum.setError("number must begin with +");
+            return;
+        }
+
+        if(phoneNumber.length() > 13 || phoneNumber.length() < 13){
+            mNum.setError("number format not correct");
+            return;
+        }
+
+
+
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                phoneNumber, 60, TimeUnit.SECONDS, MainActivity.this, new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                phoneNumber, 60, TimeUnit.SECONDS, MainActivity.this,
+                new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
 
                     @Override
@@ -82,8 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
-
-                        Toast.makeText(MainActivity.this, "verification failed" + e.getMessage(), Toast.LENGTH_LONG).show();
+                        mNum.setError("verification failed" + e.getMessage());
 
 
 
@@ -102,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 "verification failed" + verificationId,
                                 Toast.LENGTH_LONG).show();
                     }
+
                 }
         );
 
@@ -131,7 +147,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int position = v.getId();
         switch (position) {
             case R.id.send_button:
-                requestCode(v);
+                try {
+                    requestCode(v);
+                } catch (FirebaseTooManyRequestsException e) {
+                    e.getMessage();
+                }
                 break;
 
             case R.id.sign_in_button:
